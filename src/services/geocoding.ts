@@ -17,13 +17,15 @@ async function fetchPlaceData(placeName: string): Promise<Place[]> {
         }
     });
 
-    return geocodeResponse.data.results.map(place => {
+    const transformedGeocodeResponse = geocodeResponse.data.results.map(place => {
         return {
             name: place.name,
             latitude: place.latitude,
             longitude: place.longitude
         }
     });
+
+    return transformedGeocodeResponse.filter(place => place.latitude != null && place.longitude != null);
 }
 
 
