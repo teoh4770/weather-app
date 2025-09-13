@@ -1,24 +1,30 @@
+import axios from "axios";
+
 interface Place {
     name: string;
     latitude: number;
     longitude: number;
 }
 
-async function geocodeLocation(location: string, places: Place[]) {
-    const result: {
-        name: string;
-        latitude: number;
-        longitude: number;
-    }[] = [];
+async function geocodeLocations(placeName: string, places: Place[]) {
+    return places.filter(place => place.name.toLowerCase().includes(placeName.toLowerCase()));
+}
 
-    places.forEach(place => {
-        if (place.name.toLowerCase().includes(location.toLowerCase())) {
-            console.log('I am here');
-            result.push(place);
+async function fetchPlaceData(placeName: string): Promise<Place[]> {
+    const geocodeResponse = await axios.get('https://geocoding-api.open-meteo.com/v1/search', {
+        params: {
+            name: placeName
         }
     });
 
-    return result;
+    return geocodeResponse.data.results.map(place => {
+        return {
+            name: place.name,
+            latitude: place.latitude,
+            longitude: place.longitude
+        }
+    });
 }
 
-export {geocodeLocation};
+
+export {geocodeLocations, fetchPlaceData};
