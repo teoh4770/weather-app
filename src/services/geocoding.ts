@@ -17,7 +17,14 @@ async function fetchPlaceData(placeName: string): Promise<Place[]> {
         }
     });
 
-    const transformedGeocodeResponse = geocodeResponse.data.results.map(place => {
+    return parseGeocodingResults(geocodeResponse.data.results);
+}
+
+
+export {geocodeLocations, fetchPlaceData};
+
+function parseGeocodingResults(geocodeResponseResults: any) {
+    const transformedGeocodeResponse = geocodeResponseResults.map(place => {
         return {
             name: place.name,
             latitude: place.latitude,
@@ -27,6 +34,3 @@ async function fetchPlaceData(placeName: string): Promise<Place[]> {
 
     return transformedGeocodeResponse.filter(place => place.latitude != null && place.longitude != null);
 }
-
-
-export {geocodeLocations, fetchPlaceData};
