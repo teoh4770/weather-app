@@ -36,5 +36,5 @@ async function fetchPlaceData(placeName: string): Promise<Place[]> {
 }
 
 
-export {fetchPlaceData};
+export {fetchPlaceData, parseGeocodingResults};
 
