@@ -1,9 +1,15 @@
 <script lang="ts" setup>
 // import the components here later
 import SearchBar from "./components/SearchBar.vue";
-import {taco} from "./services/weather.ts";
+import {simplestTaco} from "./services/weather.ts";
 
-taco()
+// taco()
+//     "latitude": 43.4254,
+// "longitude": -80.5112
+simplestTaco({
+  "latitude": 43.4254,
+  "longitude": -80.5112
+})
 
 const handleWeatherSearch = (city: string) => {
   console.log('App component received city:', city);
