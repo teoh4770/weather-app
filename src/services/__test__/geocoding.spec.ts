@@ -14,7 +14,7 @@ const mockedAxios = vi.mocked(axios, {
 });
 
 // Test HTTP connection
-describe('fetchPlacesCoordinates', () => {
+describe('fetchPlacesGeocoding', () => {
     beforeEach(() => {
         vi.clearAllMocks();
     })
