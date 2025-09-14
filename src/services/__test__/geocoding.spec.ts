@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {fetchPlacesCoordinates, parseGeocodingResults, type Place} from "../geocoding.ts";
+import {fetchPlacesGeocoding, parseGeocodingResults, type Place} from "../geocoding.ts";
 import axios from "axios";
 
 // Mock the entire axios module
@@ -51,7 +51,7 @@ describe('fetchPlacesCoordinates', () => {
         mockedAxios.get.mockResolvedValueOnce(mockApiResponse)
 
         // Act
-        const result = await fetchPlacesCoordinates(searchQuery);
+        const result = await fetchPlacesGeocoding(searchQuery);
 
         // Assert
         expect(mockedAxios.get).toHaveBeenCalledOnce();
@@ -120,7 +120,7 @@ describe('fetchPlacesCoordinates', () => {
         mockedAxios.get.mockResolvedValueOnce(mockApiResponse)
 
         // Act
-        const result = await fetchPlacesCoordinates(searchQuery);
+        const result = await fetchPlacesGeocoding(searchQuery);
 
         // Assert
         expect(mockedAxios.get).toHaveBeenCalledOnce();
