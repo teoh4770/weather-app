@@ -2,7 +2,6 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {fetchPlacesGeocoding, parseGeocodingResults, type Place} from "../geocoding.ts";
 import axios from "axios";
 
-// Mock the entire axios module
 vi.mock('axios', () => ({
     default: {
         get: vi.fn(),
