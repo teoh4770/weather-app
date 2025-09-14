@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 // import the components here later
 import SearchBar from "./components/SearchBar.vue";
+import {taco} from "./services/weather.ts";
+
+taco()
 
 const handleWeatherSearch = (city: string) => {
   console.log('App component received city:', city);
