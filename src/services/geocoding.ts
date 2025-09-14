@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Interfaces
-interface Place {
+export interface Place {
     name: string;
     latitude: number;
     longitude: number;
@@ -16,6 +16,7 @@ interface GeocodingResult {
 }
 
 // Helpers
+// Geocoding = provide geographical coordinates corresponding to (a location).
 function parseGeocodingResults(geocodeResponseResults: GeocodingResult[]): Place[] {
     return geocodeResponseResults
         .map(({name, latitude, longitude}) => ({name, latitude, longitude}))
@@ -25,7 +26,7 @@ function parseGeocodingResults(geocodeResponseResults: GeocodingResult[]): Place
 }
 
 // Main methods
-async function fetchPlaceData(placeName: string): Promise<Place[]> {
+async function fetchPlacesCoordinates(placeName: string): Promise<Place[]> {
     const geocodeResponse = await axios.get('https://geocoding-api.open-meteo.com/v1/search', {
         params: {
             name: placeName
@@ -36,5 +37,5 @@ async function fetchPlaceData(placeName: string): Promise<Place[]> {
 }
 
 
-export {fetchPlaceData, parseGeocodingResults};
+export {fetchPlacesCoordinates, parseGeocodingResults};
 

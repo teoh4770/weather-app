@@ -1,5 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {fetchPlaceData, parseGeocodingResults} from "../geocoding.ts";
+import {fetchPlacesCoordinates, parseGeocodingResults, type Place} from "../geocoding.ts";
 import axios from "axios";
 
 // Mock the entire axios module
@@ -13,7 +13,8 @@ const mockedAxios = vi.mocked(axios, {
     deep: true
 });
 
-describe('fetchPlaceData', () => {
+// Test HTTP connection
+describe('fetchPlacesCoordinates', () => {
     beforeEach(() => {
         vi.clearAllMocks();
     })
@@ -50,7 +51,7 @@ describe('fetchPlaceData', () => {
         mockedAxios.get.mockResolvedValueOnce(mockApiResponse)
 
         // Act
-        const result = await fetchPlaceData(searchQuery);
+        const result = await fetchPlacesCoordinates(searchQuery);
 
         // Assert
         expect(mockedAxios.get).toHaveBeenCalledOnce();
@@ -119,7 +120,7 @@ describe('fetchPlaceData', () => {
         mockedAxios.get.mockResolvedValueOnce(mockApiResponse)
 
         // Act
-        const result = await fetchPlaceData(searchQuery);
+        const result = await fetchPlacesCoordinates(searchQuery);
 
         // Assert
         expect(mockedAxios.get).toHaveBeenCalledOnce();
@@ -132,6 +133,7 @@ describe('fetchPlaceData', () => {
     });
 });
 
+// Test transform and filter logic
 describe('parseGeocodingResults', () => {
     it('should transform completely valid data correctly', () => {
         // Arrange
@@ -333,7 +335,7 @@ describe('parseGeocodingResults', () => {
 
     it('should return empty array when input array is empty', () => {
         // Arrange
-        const emptyResults = [];
+        const emptyResults: Place[] = [];
 
         // Act
         const result = parseGeocodingResults(emptyResults);
