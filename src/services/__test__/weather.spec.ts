@@ -1,5 +1,5 @@
 import {afterEach, describe, expect, it, vi} from "vitest";
-import {fetchWeatherData} from "../weather.ts";
+import {fetchWeatherData, transformCurrentWeather} from "../weather.ts";
 import axios from "axios";
 
 // Successful payload in the format matching Open-Meteo documentation after transformation
@@ -637,5 +637,30 @@ describe('fetchWeatherData', () => {
             params
         })
         expect(expected).toEqual(mockSuccessfulWeatherPayload.data);
+    });
+})
+
+describe('transformCurrentWeather', () => {
+    it('should transform current weather', () => {
+        // Arrange
+        const currentWeatherData = mockSuccessfulWeatherPayload.data.current;
+        const currentUnits = mockSuccessfulWeatherPayload.data.current_units;
+
+        // Act
+        const transformedCurrentWeatherData = transformCurrentWeather(currentWeatherData, currentUnits);
+
+        // Assert
+        expect(transformedCurrentWeatherData).toEqual({
+            temperature: "20°C",
+            feelsLike: "20°C",
+            humidity: "70%",
+            windSpeed: "9.2km/h",
+            precipitation: "0.0mm",
+            isDaytime: true,
+            lastUpdated: {
+                date: '2025-09-15',
+                time: '17:15'
+            }
+        });
     });
 })
