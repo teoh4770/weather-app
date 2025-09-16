@@ -58,7 +58,7 @@ interface WeatherDataRaw {
     }
 }
 
-interface CurrentWeatherDataUI {
+interface CurrentWeatherData {
     temperature: string;
     feelsLike: string;
     humidity: string;
@@ -70,6 +70,21 @@ interface CurrentWeatherDataUI {
         time: string
     }
 }
+
+interface HourlyWeatherData {
+    date: string; // 2025-09-15
+    time: string; // 12:00AM
+    temperature: string; // 12°C
+    weatherCode: number; // 8
+}
+
+interface DailyWeatherData {
+    date: string;
+    maxTemperature: string;
+    minTemperature: string;
+    weatherCode: number;
+}
+
 
 // Helpers
 async function fetchWeatherData(coordinates: Coordinates): Promise<WeatherDataRaw> {
@@ -86,27 +101,49 @@ async function fetchWeatherData(coordinates: Coordinates): Promise<WeatherDataRa
     return response.data;
 }
 
-function transformCurrentWeather(currentWeatherDataRaw: WeatherDataRaw['current'], currentUnits: WeatherDataRaw['current_units']): CurrentWeatherDataUI {
-    const temperature = Math.round(currentWeatherDataRaw.temperature_2m);
-    const feelsLike = Math.round(currentWeatherDataRaw.apparent_temperature);
-    const humidity = Math.round(currentWeatherDataRaw.relative_humidity_2m);
-    const windSpeed = currentWeatherDataRaw.wind_speed_10m.toFixed(1);
-    const precipitation = currentWeatherDataRaw.precipitation.toFixed(1);
-    const isDaytime = currentWeatherDataRaw.is_day === 1;
-    const [date, time] = currentWeatherDataRaw.time.split('T');
-
+function transformCurrentWeather(currentWeatherDataRaw: WeatherDataRaw['current'], currentUnits: WeatherDataRaw['current_units']): CurrentWeatherData {
     return {
-        temperature: temperature + currentUnits.temperature_2m,
-        feelsLike: feelsLike + currentUnits.apparent_temperature,
-        humidity: humidity + currentUnits.relative_humidity_2m,
-        windSpeed: windSpeed + currentUnits.wind_speed_10m,
-        precipitation: precipitation + currentUnits.precipitation,
-        isDaytime: isDaytime,
+        temperature: Math.round(currentWeatherDataRaw.temperature_2m) + currentUnits.temperature_2m,
+        feelsLike: Math.round(currentWeatherDataRaw.apparent_temperature) + currentUnits.apparent_temperature,
+        humidity: Math.round(currentWeatherDataRaw.relative_humidity_2m) + currentUnits.relative_humidity_2m,
+        windSpeed: currentWeatherDataRaw.wind_speed_10m.toFixed(1) + currentUnits.wind_speed_10m,
+        precipitation: currentWeatherDataRaw.precipitation.toFixed(1) + currentUnits.precipitation,
+        isDaytime: currentWeatherDataRaw.is_day === 1,
         lastUpdated: {
-            date,
-            time
+            date: currentWeatherDataRaw.time.split('T')[0],
+            time: currentWeatherDataRaw.time.split('T')[1],
         }
     }
 }
 
-export {fetchWeatherData, transformCurrentWeather};
+function transformHourlyWeather(hourlyDataRaw: WeatherDataRaw['hourly'], hourlyUnits: WeatherDataRaw['hourly_units']): HourlyWeatherData[] {
+    const result: HourlyWeatherData[] = [];
+
+    hourlyDataRaw.time.forEach((time, index) => {
+        result.push({
+            date: time.split('T')[0],
+            time: time.split('T')[1],
+            temperature: Math.round(hourlyDataRaw.temperature_2m[index]) + hourlyUnits.temperature_2m,
+            weatherCode: hourlyDataRaw.weather_code[index]
+        })
+    })
+
+    return result;
+}
+
+function transformDailyWeather(dailyDataRaw: WeatherDataRaw['daily'], dailyUnits: WeatherDataRaw['daily_units']): DailyWeatherData[] {
+    const result: DailyWeatherData[] = [];
+
+    dailyDataRaw.time.forEach((date, index) => {
+        result.push({
+            date: date,
+            maxTemperature: Math.round(dailyDataRaw.temperature_2m_max[index]) + dailyUnits.temperature_2m_max,
+            minTemperature: Math.round(dailyDataRaw.temperature_2m_min[index]) + dailyUnits.temperature_2m_min,
+            weatherCode: dailyDataRaw.weather_code[index]
+        })
+    })
+
+    return result;
+}
+
+export {fetchWeatherData, transformCurrentWeather, transformHourlyWeather, transformDailyWeather};
